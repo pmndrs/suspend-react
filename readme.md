@@ -1,7 +1,5 @@
 [![Build Size](https://img.shields.io/bundlephobia/min/suspend-react?label=bunlde%20size&style=flat&colorA=000000&colorB=000000)](https://bundlephobia.com/result?p=suspend-react)
-[![Build Status](https://img.shields.io/travis/pmndrs/suspend-react/master?style=flat&colorA=000000&colorB=000000)](https://travis-ci.org/pmndrs/suspend-react)
 [![Version](https://img.shields.io/npm/v/suspend-react?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/suspend-react)
-[![Downloads](https://img.shields.io/npm/dt/suspend-react.svg?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/suspend-react)
 
 ```shell
 npm install suspend-react
@@ -38,9 +36,11 @@ function App() {
 }
 ```
 
-#### Preloading
+#### Preloading ![](https://img.shields.io/badge/-experimental-%23ff2040)
 
 You can preload your cache with the same cache keys you later read form. The async function can be external (that goes for `suspend(fn, [args])` as well), it receives the cache key dependencies as function arguments and in the same order.
+
+
 
 ```jsx
 import { preload } from 'suspend-react'
@@ -54,7 +54,7 @@ async function fetchFromHN(id, version) {
 preload(fetchFromHN, [10000, 'v0'])
 ```
 
-#### Cache busting
+#### Cache busting ![](https://img.shields.io/badge/-experimental-%23ff2040)
 
 You can remove cached items, either by clearing them all, or by providing cache keys.
 
@@ -67,7 +67,7 @@ clear()
 clear([10000, 'v0'])
 ```
 
-#### Peeking into entries outside of suspense
+#### Peeking into entries outside of suspense ![](https://img.shields.io/badge/-experimental-%23ff2040)
 
 Peeking into the cache will give you the result immediately or return `undefined` if it is not present yet.
 
@@ -82,8 +82,6 @@ peek(['1000', 'v0'])
 
 Correct types will be inferred automatically.
 
-# Recipes
-
-#### Simple data fetching
+# Demos
 
 Fetching posts from hacker-news: [codesandbox](https://codesandbox.io/s/use-asset-forked-yb62q?file=/src/App.js)
