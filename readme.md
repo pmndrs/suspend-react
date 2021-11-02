@@ -36,11 +36,9 @@ function App() {
 }
 ```
 
-#### Preloading ![](https://img.shields.io/badge/-experimental-%23ff2040)
+#### Preloading
 
 You can preload your cache with the same cache keys you later read form. The async function can be external (that goes for `suspend(fn, [args])` as well), it receives the cache key dependencies as function arguments and in the same order.
-
-
 
 ```jsx
 import { preload } from 'suspend-react'
@@ -54,7 +52,7 @@ async function fetchFromHN(id, version) {
 preload(fetchFromHN, [10000, 'v0'])
 ```
 
-#### Cache busting ![](https://img.shields.io/badge/-experimental-%23ff2040)
+#### Cache busting
 
 You can remove cached items, either by clearing them all, or by providing cache keys.
 
@@ -67,7 +65,7 @@ clear()
 clear([10000, 'v0'])
 ```
 
-#### Peeking into entries outside of suspense ![](https://img.shields.io/badge/-experimental-%23ff2040)
+#### Peeking into entries outside of suspense
 
 Peeking into the cache will give you the result immediately or return `undefined` if it is not present yet.
 
