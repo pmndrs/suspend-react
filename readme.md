@@ -51,7 +51,6 @@ async function fetchFromHN(id, version) {
   return await res.json()
 }
 
-// You can preload assets, these will be executed and cached immediately
 preload(fetchFromHN, [10000, 'v0'])
 ```
 
