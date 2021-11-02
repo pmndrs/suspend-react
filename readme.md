@@ -35,7 +35,9 @@ function App() {
 }
 ```
 
-What happened here? Let's go step by step. 
+What happened here? How is this possible? Let's go step by step. 
+
+React suspense is new feature that came with 16.6. It allows components to stop in the midst of the render-phase, and later resume.
 
 ![](https://img.shields.io/badge/-1-%23000000) If you have a promise, or an async task, stick it into the `suspend` function. It will only execute when dependencies change, otherwise it will return immediately, because results are cached.  ![](https://img.shields.io/badge/-2-%23000000) Your async task could be a fetch request, awaiting a promise or async functions, a worker, wasm, etc.  ![](https://img.shields.io/badge/-3-%23000000) While executing the component will be suspended, it needs to be wrapped into `<Suspense fallback={...}>` which allows you to set a fallback that is shown while the task is unresolved. ![](https://img.shields.io/badge/-4-%23000000) When it does resolve the return value is the result of the promise. The data is guaranteed to be present!
 
