@@ -44,6 +44,12 @@ What happened here?
 2. The component needs to be wrapped into `<Suspense fallback={...}>` which allows you to set a fallback.
 3. If `suspend` runs again with the same dependencies it will return the cached result.
 
+#### API
+
+`suspend((...dependencies) => Promise<any>, dependencies)`
+
+The dependencies act as cache-keys. The resolved result is cached according to those keys, the same keys return a previously cached entry immediately. The function has to return a thenable (async function or a promise). It will receive the cache keys/dependencies as arguments. You can define it externally. `suspend` will eventually return the resolved value, which is guaranteed, you do not have to check for its presence. Errors will bubble up to the nearest error-boundary.
+
 #### Preloading
 
 ```jsx
