@@ -17,7 +17,7 @@ function suspend<Args extends Tuple<unknown>, Fn extends (...args: Args) => Prom
     // Find a match
     if (deepEqual(args, entry.args)) {
       // If we're pre-loading and the element is present, just return
-      //if (preload) return undefined as unknown as Response
+      if (preload) return undefined as unknown as Await<ReturnType<Fn>>
       // If an error occurred, throw
       if (entry.error) throw entry.error
       // If a response was successful, return
