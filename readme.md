@@ -7,7 +7,7 @@
 npm install suspend-react
 ```
 
-This library integrates your async ops into React suspense. It allows you to establish error-handling and loading fallbacks at the parental level. The individual component functions similar to how async/await works in Javascript.
+This library integrates your async ops into React suspense. Error-handling & loading states are handled at the parental level. The individual component functions similar to async/await in Javascript.
 
 - Chain your operations synchronously
 - No useEffect/setState hassle
@@ -29,7 +29,7 @@ function Post({ id, version = 'v0' }) {
 function App() {
   return (
     <Suspense fallback={<div>loading...</div>}>
-      <Post id={10000} />
+      <Post id={1000} />
     </Suspense>
   )
 }
@@ -51,7 +51,7 @@ async function fetchFromHN(id, version) {
   return await res.json()
 }
 
-preload(fetchFromHN, [10000, 'v0'])
+preload(fetchFromHN, [1000, 'v0'])
 ```
 
 #### Cache busting
@@ -62,7 +62,7 @@ import { clear } from 'suspend-react'
 // Clear all cached entries
 clear()
 // Clear a specific entry
-clear([10000, 'v0'])
+clear([1000, 'v0'])
 ```
 
 #### Peeking into entries outside of suspense
@@ -71,7 +71,7 @@ clear([10000, 'v0'])
 import { peek } from 'suspend-react'
 
 // This will either return the value (without suspense!) or undefined
-peek(['1000', 'v0'])
+peek([1000, 'v0'])
 ```
 
 #### Typescript
