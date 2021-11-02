@@ -43,8 +43,6 @@ What happened here?
 
 #### Preloading
 
-You can preload your cache with the same cache keys you later read form. The async function can be external (that goes for `suspend(fn, [args])` as well), it receives the cache key dependencies as function arguments and in the same order.
-
 ```jsx
 import { preload } from 'suspend-react'
 
@@ -59,8 +57,6 @@ preload(fetchFromHN, [10000, 'v0'])
 
 #### Cache busting
 
-You can remove cached items, either by clearing them all, or by providing cache keys.
-
 ```jsx
 import { clear } from 'suspend-react'
 
@@ -71,8 +67,6 @@ clear([10000, 'v0'])
 ```
 
 #### Peeking into entries outside of suspense
-
-Peeking into the cache will give you the result immediately or return `undefined` if it is not present yet.
 
 ```jsx
 import { peek } from 'suspend-react'
@@ -87,7 +81,7 @@ Correct types will be inferred automatically.
 
 #### React 18
 
-Suspense, as is, has been a stable part of React since 16.6, but React will likely add some [interesting caching and cache busting APIs](https://github.com/reactwg/react-18/discussions/25) that could allow you to define cache boundaries declaratively (`getCacheForType`). Expect these to be work for suspend-react once they come out.
+Suspense, as is, has been a stable part of React since 16.6, but React will likely add some [interesting caching and cache busting APIs](https://github.com/reactwg/react-18/discussions/25) that could allow you to define cache boundaries declaratively. Expect these to be work for suspend-react once they come out.
 
 # Demos
 
