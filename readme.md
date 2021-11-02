@@ -86,12 +86,4 @@ Correct types will be inferred automatically.
 
 #### Simple data fetching
 
-Fetching posts from hacker-news: [codesandbox](https://codesandbox.io/s/suspend-react-demo-forked-ji8ky)
-
-#### Infinite load on scroll
-
-Fetching HN posts infinitely: [codesandbox](https://codesandbox.io/s/suspend-react-forked-ouzkc)
-
-#### Async dependencies
-
-Component A waits for the result of component B: [codesandbox](https://codesandbox.io/s/suspend-react-dependency-70908)
+Fetching posts from hacker-news: [codesandbox](https://codesandbox.io/s/use-asset-forked-yb62q?file=/src/App.js)
