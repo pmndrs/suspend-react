@@ -6,13 +6,27 @@ const root = process.platform === 'win32' ? path.resolve('/') : '/'
 const external = (id) => !id.startsWith('.') && !id.startsWith(root)
 const extensions = ['.js', '.jsx', '.ts', '.tsx', '.json']
 
-const getBabelOptions = ({ useESModules }, targets) => ({
+const getBabelOptions = ({ useESModules }) => ({
   babelrc: false,
   extensions,
   exclude: '**/node_modules/**',
   babelHelpers: 'runtime',
   presets: [
-    ['@babel/preset-env', { loose: true, modules: false, targets }],
+    [
+      '@babel/preset-env',
+      {
+        include: [
+          '@babel/plugin-proposal-optional-chaining',
+          '@babel/plugin-proposal-nullish-coalescing-operator',
+          '@babel/plugin-proposal-numeric-separator',
+          '@babel/plugin-proposal-logical-assignment-operators',
+        ],
+        bugfixes: true,
+        loose: true,
+        modules: false,
+        targets: '> 1%, not dead, not ie 11, not op_mini all',
+      },
+    ],
     '@babel/preset-react',
     '@babel/preset-typescript',
   ],
@@ -25,7 +39,7 @@ export default [
     output: { file: `dist/index.js`, format: 'esm' },
     external,
     plugins: [
-      babel(getBabelOptions({ useESModules: true }, '>1%, not dead, not ie 11, not op_mini all')),
+      babel(getBabelOptions({ useESModules: true })),
       resolve({ extensions }),
     ],
   },
