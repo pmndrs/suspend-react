@@ -46,8 +46,8 @@ What happened here?
 
 #### API
 
-```tsx
-const result = suspend(fn: (...dependencies) => Promise<any>, dependencies: any[])
+```jsx
+const result = suspend((...dependencies) => Promise<any>, dependencies: any[])
 ```
 
 The dependencies act as cache-keys. The resolved result is cached according to those keys, the same keys return a previously cached entry immediately. The function has to return a thenable (async function or a promise). It will receive the cache keys/dependencies as arguments. You can define it externally. `suspend` will eventually return the resolved value, which is guaranteed, you do not have to check for its presence. Errors will bubble up to the nearest error-boundary.
