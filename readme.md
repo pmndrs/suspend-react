@@ -37,7 +37,9 @@ function App() {
 
 What happened here? Let's go step by step. React suspense is new feature that came with 16.6. It allows components to interrupt the render-phase, and later resume.
 
-![](https://img.shields.io/badge/-1-%23000000) You have a promise, stick it into the `suspend` function. It will interupt the component while the promise resolves and then cache the result. ![](https://img.shields.io/badge/-2-%23000000) The component needs to be wrapped into `<Suspense fallback={...}>` which allows you to set a fallback. ![](https://img.shields.io/badge/-3-%23000000) The return value is the result of the promise, the data is guaranteed to be present! If the suspend function runs again with the same dependencies it will return the cached result immediately.
+1. You have a promise, stick it into the `suspend` function. It will interupt the component while the promise resolves and then cache the result.
+2. The component needs to be wrapped into `<Suspense fallback={...}>` which allows you to set a fallback.
+3. The return value is the result of the promise, the data is guaranteed to be present! If the `suspend` function runs again with the same dependencies it will return the cached result immediately.
 
 #### Preloading
 
