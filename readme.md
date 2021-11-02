@@ -9,7 +9,7 @@ npm install suspend-react
 
 This library integrates your async ops into React suspense. It allows you to establish error-handling and loading fallbacks at the parental level. The individual component functions similar to how async/await works in Javascript.
 
-- Chain your operations synchroneously
+- Chain your operations synchronously
 - No useEffect/setState hassle
 - No checking for the presence of your data
 - All React versions >= 16.6
@@ -85,7 +85,7 @@ Correct types will be inferred automatically.
 
 #### React 18
 
-Suspense, as is, has been a stable part of React since 16.6, but React will likely add some [interesting caching and cache busting apis](https://github.com/reactwg/react-18/discussions/25) that could allow you to define cache boundaries declaratively (getCacheForType). Expect these to be work for suspend-react once they come out.
+Suspense, as is, has been a stable part of React since 16.6, but React will likely add some [interesting caching and cache busting APIs](https://github.com/reactwg/react-18/discussions/25) that could allow you to define cache boundaries declaratively (`getCacheForType`). Expect these to be work for suspend-react once they come out.
 
 # Demos
 
