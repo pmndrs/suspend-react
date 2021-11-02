@@ -80,7 +80,7 @@ peek(['1000', 'v0'])
 
 #### Typescript
 
-Correct types will be inferred.
+Correct types will be inferred automatically.
 
 # Recipes
 
