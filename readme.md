@@ -19,14 +19,10 @@ import { Suspense } from 'react'
 import { suspend } from 'suspend-react'
 
 function Post({ id, version = 'v0' }) {
-  // Results are cached, the function will only execute when dependencies change
-  // When it does execute it will suspend the component until it has resolved
   const { by, title } = suspend(async (/*id, version*/) => {
-    // Any async task can run in here, fetch requests, parsing, workers, promises, ...
     const res = await fetch(`https://hacker-news.firebaseio.com/${version}/item/${id}.json`)
     return await res.json()
   }, [id, version])
-  // By the time we're here the async data is guaranteed to exist!
   return <div>{title} by {by}</div>
 }
 
@@ -38,6 +34,8 @@ function App() {
   )
 }
 ```
+
+What happened here? Let's go step by step. If you have a promise, or an async task, stick it into the `suspend` function. It will only execute when dependencies change, otherwise it will return immediately, because results are cached. Your async task could be a fetch request, awaiting a promise or async functions, a worker, wasm, etc. While executing the component will be suspended, it needs to be wrapped into `<Suspense fallback={...}>` which allows you to set a fallback that is shown while the task is unresolved. When it does resolve the return value is the result of the promise. The data is guaranteed to be present!
 
 #### Preloading
 
