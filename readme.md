@@ -35,7 +35,9 @@ function App() {
 }
 ```
 
-What happened here? Let's go step by step. If you have a promise, or an async task, stick it into the `suspend` function. It will only execute when dependencies change, otherwise it will return immediately, because results are cached. Your async task could be a fetch request, awaiting a promise or async functions, a worker, wasm, etc. While executing the component will be suspended, it needs to be wrapped into `<Suspense fallback={...}>` which allows you to set a fallback that is shown while the task is unresolved. When it does resolve the return value is the result of the promise. The data is guaranteed to be present!
+What happened here? Let's go step by step. 
+
+![](https://img.shields.io/badge/-1-%2320ef40) If you have a promise, or an async task, stick it into the `suspend` function. It will only execute when dependencies change, otherwise it will return immediately, because results are cached.  ![](https://img.shields.io/badge/-2-%2320ef40) Your async task could be a fetch request, awaiting a promise or async functions, a worker, wasm, etc.  ![](https://img.shields.io/badge/-3-%2320ef40) While executing the component will be suspended, it needs to be wrapped into `<Suspense fallback={...}>` which allows you to set a fallback that is shown while the task is unresolved. ![](https://img.shields.io/badge/-4-%2320ef40) When it does resolve the return value is the result of the promise. The data is guaranteed to be present!
 
 #### Preloading
 
