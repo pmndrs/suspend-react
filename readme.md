@@ -4,6 +4,7 @@
 <br />
 <a href="https://github.com/pmndrs/suspend-react"><img src="https://github.com/pmndrs/suspend-react/blob/main/hero.svg?raw=true" /></a>
 <br />
+<br />
 
 ```shell
 npm install suspend-react
