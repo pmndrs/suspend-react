@@ -12,7 +12,11 @@ type PromiseCache<Args extends Tuple<unknown>> = {
 
 const globalCache: PromiseCache<Tuple<unknown>>[] = []
 
-function suspend<Args extends Tuple<unknown>, Fn extends (...args: Args) => Promise<unknown>>(fn: Fn, args: Args, preload = false) {
+function query<Args extends Tuple<unknown>, Fn extends (...args: Args) => Promise<unknown>>(
+  fn: Fn,
+  args: Args,
+  preload = false
+) {
   for (const entry of globalCache) {
     // Find a match
     if (deepEqual(args, entry.args)) {
@@ -54,8 +58,11 @@ function clear<Args extends Tuple<unknown>>(args?: Args) {
   }
 }
 
+const suspend = <Args extends Tuple<unknown>, Fn extends (...args: Args) => Promise<unknown>>(fn: Fn, args: Args) =>
+  query(fn, args)
+
 const preload = <Args extends Tuple<unknown>, Fn extends (...args: Args) => Promise<unknown>>(fn: Fn, args: Args) =>
-  void suspend(fn, args, true)
+  void query(fn, args, true)
 
 const peek = <Args extends Tuple<unknown>>(args: Args) =>
   globalCache.find((entry) => deepEqual(args, entry.args))?.response
