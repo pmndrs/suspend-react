@@ -12,6 +12,7 @@ This library integrates your async ops into React suspense. It allows you to est
 - Chain your operations synchroneously
 - No useEffect/setState hassle
 - No checking for the presence of your data
+- All React versions >= 16.6
 
 ```jsx
 import { Suspense } from 'react'
@@ -41,8 +42,6 @@ function App() {
 #### Preloading
 
 You can preload your cache with the same cache keys you later read form. The async function can be external (that goes for `suspend(fn, [args])` as well), it receives the cache key dependencies as function arguments and in the same order.
-
-
 
 ```jsx
 import { preload } from 'suspend-react'
