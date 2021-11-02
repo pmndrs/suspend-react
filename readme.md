@@ -1,7 +1,10 @@
-[![Build Size](https://img.shields.io/bundlephobia/min/suspend-react?label=bunlde%20size&style=flat&colorA=000000&colorB=000000)](https://bundlephobia.com/result?p=suspend-react)
+[![Build Size](https://img.shields.io/bundlephobia/minzip/suspend-react?label=bundle%20size&style=flat&colorA=000000&colorB=000000)](https://bundlephobia.com/result?p=suspend-react)
 [![Version](https://img.shields.io/npm/v/suspend-react?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/suspend-react)
 
+<br />
 <a href="https://github.com/pmndrs/suspend-react"><img src="https://github.com/pmndrs/suspend-react/blob/main/hero.svg?raw=true" /></a>
+<br />
+<br />
 
 ```shell
 npm install suspend-react
