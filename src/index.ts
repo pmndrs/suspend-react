@@ -38,11 +38,12 @@ function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promis
   const entry: PromiseCache<Keys> = {
     keys,
     promise:
-      // Make the promise request.
+      // Execute the promise
       fn(...keys)
-        // Response can't be undefined or else the loop above wouldn't be able to return it
-        // This is for promises that do not return results (delays for instance)
+        // When it resolves, store its value
+        // Coerce undefined values into true, or else the loop above wouldn't be able to return it
         .then((response) => (entry.response = (response ?? true) as Response))
+        // Remove the entry if a lifespan was given
         .then(() => {
           if (config && config.lifespan && config.lifespan > 0) {
             setTimeout(() => {
@@ -51,9 +52,12 @@ function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promis
             }, config.lifespan)
           }
         })
+        // Store caught errors, they will be thrown in the render-phase to bubble into an error-bound
         .catch((e) => (entry.error = e ?? 'unknown error')),
   }
+  // Register the entry
   globalCache.push(entry)
+  // And throw the promise, this yields control back to React
   if (!preload) throw entry.promise
   return undefined as unknown as Await<ReturnType<Fn>>
 }
