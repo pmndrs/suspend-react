@@ -85,6 +85,16 @@ import { peek } from 'suspend-react'
 peek([1000, 'v0'])
 ```
 
+#### Lifespan
+
+Both `suspend` and `preload` can reveive a config object that, for now, only contains a `lifespan` prop that defaults to `0` (do nothing). This allows you to invalidate items over time.
+
+```jsx
+function Foo() {
+  // Keep cached item alive for one minute
+  const result = suspend(fn, keys, { lifespan: 60000 })
+```
+
 #### Typescript
 
 Correct types will be inferred automatically.
