@@ -98,4 +98,6 @@ Suspense, as is, has been a stable part of React since 16.6, but React will like
 
 #### Demos
 
-Fetching posts from hacker-news: [codesandbox](https://codesandbox.io/s/use-asset-forked-yb62q?file=/src/App.js)
+Fetching posts from hacker-news: [codesandbox](https://codesandbox.io/s/use-asset-forked-yb62q)
+
+Infinite list: [codesandbox](https://codesandbox.io/s/use-asset-infinite-list-forked-cwvs7)
