@@ -22,11 +22,11 @@ import { Suspense } from 'react'
 import { suspend } from 'suspend-react'
 
 function Post({ id, version }) {
-  const { by, title } = suspend(async (/*id, version*/) => {
+  const data = suspend(async (/*id, version*/) => {
     const res = await fetch(`https://hacker-news.firebaseio.com/${version}/item/${id}.json`)
     return await res.json()
   }, [id, version])
-  return <div>{title} by {by}</div>
+  return <div>{data.title} by {data.by}</div>
 }
 
 function App() {
