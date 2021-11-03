@@ -15,7 +15,7 @@ This library integrates your async ops into React suspense. Error-handling & loa
 - Chain your operations synchronously
 - No useEffect/setState hassle
 - No checking for the presence of your data
-- All React versions >= 16.6
+- **All React versions >= 16.6**
 
 ```jsx
 import { Suspense } from 'react'
