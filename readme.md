@@ -47,10 +47,17 @@ What happened here?
 #### API
 
 ```jsx
-const result = suspend((...dependencies) => Promise<any>, keys: any[])
+const result = suspend((...dependencies) => Promise<any>, keys: any[], config)
 ```
 
 The keys act as cache-keys. The resolved result is cached according to those keys, the same keys return a previously cached entry immediately. The function has to return a thenable (async function or a promise). It will receive the cache keys as arguments. You can define it externally. `suspend` will eventually return the resolved value, which is guaranteed, you do not have to check for its presence. Errors will bubble up to the nearest error-boundary.
+
+Both `suspend` and `preload` can reveive a config object that, for now, only contains a `lifespan` prop that defaults to `0` (do nothing). This allows you to invalidate items over time.
+
+```jsx
+// Keep cached item alive for one minute
+suspend(fn, keys, { lifespan: 60000 })
+```
 
 #### Preloading
 
@@ -83,16 +90,6 @@ import { peek } from 'suspend-react'
 
 // This will either return the value (without suspense!) or undefined
 peek([1000, 'v0'])
-```
-
-#### Lifespan
-
-Both `suspend` and `preload` can reveive a config object that, for now, only contains a `lifespan` prop that defaults to `0` (do nothing). This allows you to invalidate items over time.
-
-```jsx
-function Foo() {
-  // Keep cached item alive for one minute
-  const result = suspend(fn, keys, { lifespan: 60000 })
 ```
 
 #### Typescript
