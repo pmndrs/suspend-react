@@ -44,7 +44,7 @@ function App() {
 const result = suspend((...keys) => Promise<any>, keys: any[], config)
 ```
 
-The dependencies/keys act as cache-keys, use as many as you want. If an entry is already in cache calling `suspend` with the same keys will return it immediately, similar to useMemo but across the component tree. The first-arg function has to return a thenable (async function or a promise), it receives the keys as arguments. `suspend` will return the resolved value, not a promise! This is guaranteed, you do not have to check for validity. Errors will bubble up to the nearest error-boundary.
+The dependencies/keys act as cache-keys, use as many as you want. If an entry is already in cache, calling `suspend` with the same keys will return it immediately, similar to useMemo but across the component tree. The first-arg function has to return a thenable (async function or a promise), it receives the keys as arguments. `suspend` will return the resolved value, not a promise! This is guaranteed, you do not have to check for validity. Errors will bubble up to the nearest error-boundary.
 
 `suspend` will interrupt the render-phase. For this to work you need to wrap it into a `<React.Suspense>` boundary, which also allows you to set a fallback.
 
