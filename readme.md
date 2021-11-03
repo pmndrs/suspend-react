@@ -21,7 +21,7 @@ This library integrates your async ops into React suspense. Error-handling & loa
 import { Suspense } from 'react'
 import { suspend } from 'suspend-react'
 
-function Post({ id, version = 'v0' }) {
+function Post({ id, version }) {
   const { by, title } = suspend(async (/*id, version*/) => {
     const res = await fetch(`https://hacker-news.firebaseio.com/${version}/item/${id}.json`)
     return await res.json()
@@ -32,7 +32,7 @@ function Post({ id, version = 'v0' }) {
 function App() {
   return (
     <Suspense fallback={<div>loading...</div>}>
-      <Post id={1000} />
+      <Post id={1000} version="v0" />
     </Suspense>
   )
 }
