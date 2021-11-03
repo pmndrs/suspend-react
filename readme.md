@@ -42,7 +42,7 @@ What happened here?
 
 1. You have a promise, stick it into the `suspend` function. It will interupt the component.
 2. The component needs to be wrapped into `<Suspense fallback={...}>` which allows you to set a fallback.
-3. If `suspend` runs again with the same dependencies it will return the cached result.
+3. If `suspend` runs again with the same keys it will return the cached result.
 
 #### API
 
@@ -50,9 +50,9 @@ What happened here?
 const result = suspend((...dependencies) => Promise<any>, keys: any[], config)
 ```
 
-The keys act as cache-keys. The resolved result is cached according to those keys, the same keys return a previously cached entry immediately. The function has to return a thenable (async function or a promise). It will receive the cache keys as arguments. You can define it externally. `suspend` will eventually return the resolved value, which is guaranteed, you do not have to check for its presence. Errors will bubble up to the nearest error-boundary.
+The dependencies/keys act as cache-keys. With the same keys a previously cached entry is returned immediately. The first-arg function has to return a thenable (async function or a promise), it receives the cache keys as arguments. `suspend` will return the resolved value. This is guaranteed, you do not have to check for validity. Errors will bubble up to the nearest error-boundary.
 
-Both `suspend` and `preload` can reveive a config object that, for now, only contains a `lifespan` prop that defaults to `0` (do nothing). This allows you to invalidate items over time.
+Both `suspend` and `preload` can reveive a config object that, for now, only contains a `lifespan` prop that defaults to `0` (keep-alive forever). This allows you to invalidate items over time.
 
 ```jsx
 // Keep cached item alive for one minute
