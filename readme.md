@@ -105,6 +105,24 @@ import { peek } from 'suspend-react'
 peek([1000, 'v0'])
 ```
 
+#### Making cache-keys unique
+
+Since `suspend` operates on a global cache (for now, see [React 18](#react-18)), you might be wondering if keys could bleed and yes they would. To establish safety create unique or semi-unique appendixes.
+
+```diff
+- suspend(fn, [1000, 'v0'])
++ suspend(fn, [1000, 'v0', 'pmndrs/suspend-react/functionName/fetch'])
+```
+
+If you publish a library that suspend, consider symbols.
+
+```jsx
+const fetchUUID = Symbol()
+
+export function Foo() {
+  suspend(fn, [1000, 'v0', fetchUUID]
+```
+
 #### Typescript
 
 Correct types will be inferred automatically.
