@@ -111,7 +111,7 @@ Since `suspend` operates on a global cache (for now, see [React 18](#react-18)),
 
 ```diff
 - suspend(fn, [1000, 'v0'])
-+ suspend(fn, [1000, 'v0', 'pmndrs/suspend-react/functionName/fetch'])
++ suspend(fn, [1000, 'v0', 'functionName/fetch'])
 ```
 
 If you publish a library that suspend, consider symbols.
