@@ -54,7 +54,7 @@ Both `suspend` and `preload` can optionally reveive a config object,
 
 ###### Keep-alive
 
-The `lifespan` prop defaults to `0` (keep-alive forever). It allows you to invalidate items over time.
+The `lifespan` prop allows you to invalidate items over time, it defaults to `0` (keep-alive forever).
 
 ```jsx
 // Keep cached item alive for one minute
@@ -63,7 +63,7 @@ suspend(fn, keys, { lifespan: 60000 })
 
 ###### Equality function
 
-The `equal` prop defaults to shallow equal `(a, b) => a === b`, if you need it to compare objects deeply you can exchange it.
+The `equal` prop customizes key validation, it defaults to `(a, b) => a === b` (reference equality).
 
 ```jsx
 import equal from 'fast-deep-equal'
