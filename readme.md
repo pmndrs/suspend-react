@@ -114,7 +114,7 @@ Since `suspend` operates on a global cache (for now, see [React 18](#react-18)),
 + suspend(fn, [1000, 'v0', 'functionName/fetch'])
 ```
 
-If you publish a library that suspend, consider symbols.
+If you publish a library that suspends, consider symbols.
 
 ```jsx
 const fetchUUID = Symbol()
