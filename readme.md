@@ -63,12 +63,12 @@ suspend(fn, keys, { lifespan: 60000 })
 
 ###### Equality function
 
-The `equal` prop defaults to shallow equal `(a, b) => a === b`, if you need it to compare objects, prototypes, maps, sets and so on you can exchange it.
+The `equal` prop defaults to shallow equal `(a, b) => a === b`, if you need it to compare objects deeply you can exchange it.
 
 ```jsx
-import deepEqual from 'fast-deep-equal'
+import equal from 'fast-deep-equal'
 
-suspend(fn, keys, { equal: deepEqual })
+suspend(fn, keys, { equal })
 ```
 
 #### Preloading
