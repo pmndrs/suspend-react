@@ -120,7 +120,7 @@ If you publish a library that suspends, consider symbols.
 const fetchUUID = Symbol()
 
 export function Foo() {
-  suspend(fn, [1000, 'v0', fetchUUID]
+  suspend(fn, [1000, 'v0', fetchUUID])
 ```
 
 #### Typescript
