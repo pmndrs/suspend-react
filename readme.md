@@ -1,4 +1,4 @@
-[![Build Size](https://img.shields.io/bundlephobia/minzip/suspend-react?label=bundle%20size&style=flat&colorA=000000&colorB=000000)](https://bundlephobia.com/result?p=suspend-react)
+[![Build Size](https://img.shields.io/bundlephobia/minzip/suspend-react@0.0.8?label=bundle%20size&style=flat&colorA=000000&colorB=000000)](https://bundlephobia.com/result?p=suspend-react)
 [![Version](https://img.shields.io/npm/v/suspend-react?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/suspend-react)
 
 <br />
