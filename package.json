@@ -1,6 +1,6 @@
 {
   "name": "suspend-react",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Integrate React Suspense into your apps",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
