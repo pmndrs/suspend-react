@@ -50,25 +50,26 @@ The dependencies/keys act as cache-keys, use as many as you want. If an entry is
 
 #### Config
 
-Both `suspend` and `preload` can optionally reveive a config object,
+Both `suspend` and `preload` can *optionally* reveive a config object,
 
-##### Keep-alive
+###### Keep-alive
 
-The `lifespan` prop defaults to `0` (keep-alive forever). It allows you to invalidate items over time.
+The `lifespan` prop allows you to invalidate items over time, it defaults to `0` (keep-alive forever).
 
 ```jsx
 // Keep cached item alive for one minute
 suspend(fn, keys, { lifespan: 60000 })
 ```
 
-##### Equality function
+###### Equality function
 
-The `equal` prop defaults to shallow equal `(a, b) => a === b`, if you need it to compare objects, prototypes, maps, sets and so on you can exchange it.
+The `equal` prop customizes key validation, it defaults to `(a, b) => a === b` (reference equality).
 
 ```jsx
-import deepEqual from 'fast-deep-equal'
+import equal from 'fast-deep-equal'
 
-suspend(fn, keys, { equal: deepEqual })
+// Validate keys deeply
+suspend(fn, keys, { equal })
 ```
 
 #### Preloading
