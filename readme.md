@@ -48,11 +48,27 @@ When you call `suspend` it yields control back to React and the render-phase is 
 
 The dependencies/keys act as cache-keys, use as many as you want. If an entry is already in cache, calling `suspend` with the same keys will return it *immediately*, without breaking the render-phasse. Cache access is similar to useMemo but across the component tree. The first-arg function has to return a thenable (async function or a promise), it receives the keys as arguments. `suspend` will return the resolved value, not a promise! This is guaranteed, you do not have to check for validity. Errors will bubble up to the nearest error-boundary.
 
-Both `suspend` and `preload` can optionally reveive a config object that, for now, only contains a `lifespan` prop that defaults to `0` (keep-alive forever). This allows you to invalidate items over time.
+#### Config
+
+Both `suspend` and `preload` can optionally reveive a config object,
+
+##### Keep-alive
+
+The `lifespan` prop defaults to `0` (keep-alive forever). It allows you to invalidate items over time.
 
 ```jsx
 // Keep cached item alive for one minute
 suspend(fn, keys, { lifespan: 60000 })
+```
+
+##### Equality function
+
+The `equal` prop defaults to shallow equal `(a, b) => a === b`, if you need it to compare objects, prototypes, maps, sets and so on you can exchange it.
+
+```jsx
+import deepEqual from 'fast-deep-equal'
+
+suspend(fn, keys, { equal: deepEqual })
 ```
 
 #### Preloading

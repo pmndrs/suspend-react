@@ -1,28 +1,29 @@
-import deepEqual from 'fast-deep-equal'
-
 type Tuple<T = any> = [T] | T[]
 type Await<T> = T extends Promise<infer V> ? V : never
 type PromiseCache<Keys extends Tuple<unknown>> = {
   promise: Promise<unknown>
   keys: Keys
+  equal: (a: any, b: any) => boolean
   error?: any
   response?: unknown
 }
 type Config = {
   lifespan?: number
+  equal?: (a: any, b: any) => boolean
 }
 
 const globalCache: PromiseCache<Tuple<unknown>>[] = []
+const shallowEqual = (a: any, b: any) => a === b
 
 function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promise<unknown>>(
   fn: Fn,
   keys: Keys,
   preload = false,
-  config: Partial<Config> = { lifespan: 0 }
+  config: Partial<Config> = {}
 ) {
   for (const entry of globalCache) {
     // Find a match
-    if (deepEqual(keys, entry.keys)) {
+    if (entry.equal(keys, entry.keys)) {
       // If we're pre-loading and the element is present, just return
       if (preload) return undefined as unknown as Await<ReturnType<Fn>>
       // If an error occurred, throw
@@ -37,6 +38,7 @@ function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promis
   // The request is new or has changed.
   const entry: PromiseCache<Keys> = {
     keys,
+    equal: config.equal || shallowEqual,
     promise:
       // Execute the promise
       fn(...keys)
@@ -45,7 +47,7 @@ function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promis
         .then((response) => (entry.response = (response ?? true) as Response))
         // Remove the entry if a lifespan was given
         .then(() => {
-          if (config && config.lifespan && config.lifespan > 0) {
+          if (config.lifespan && config.lifespan > 0) {
             setTimeout(() => {
               const index = globalCache.indexOf(entry)
               if (index !== -1) globalCache.splice(index, 1)
@@ -62,24 +64,30 @@ function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promis
   return undefined as unknown as Await<ReturnType<Fn>>
 }
 
-function clear<Keys extends Tuple<unknown>>(keys?: Keys) {
+const suspend = <Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promise<unknown>>(
+  fn: Fn,
+  keys: Keys,
+  config?: Config
+) => query(fn, keys, false, config)
+
+const preload = <Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promise<unknown>>(
+  fn: Fn,
+  keys: Keys,
+  config?: Config
+) => void query(fn, keys, true, config)
+
+const peek = <Keys extends Tuple<unknown>>(keys: Keys) =>
+  globalCache.find((entry) => entry.equal(keys, entry.keys))?.response
+
+const clear = <Keys extends Tuple<unknown>>(keys?: Keys) => {
   if (keys === undefined || keys.length === 0) globalCache.splice(0, globalCache.length)
   else {
-    const entry = globalCache.find((entry) => deepEqual(keys, entry.keys))
+    const entry = globalCache.find((entry) => entry.equal(keys, entry.keys))
     if (entry) {
       const index = globalCache.indexOf(entry)
       if (index !== -1) globalCache.splice(index, 1)
     }
   }
 }
-
-const suspend = <Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promise<unknown>>(fn: Fn, keys: Keys, config?: Config) =>
-  query(fn, keys, false, config)
-
-const preload = <Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promise<unknown>>(fn: Fn, keys: Keys, config?: Config) =>
-  void query(fn, keys, true, config)
-
-const peek = <Keys extends Tuple<unknown>>(keys: Keys) =>
-  globalCache.find((entry) => deepEqual(keys, entry.keys))?.response
 
 export { suspend, clear, preload, peek }
