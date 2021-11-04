@@ -52,7 +52,7 @@ The dependencies/keys act as cache-keys, use as many as you want. If an entry is
 
 Both `suspend` and `preload` can optionally reveive a config object,
 
-##### Keep-alive
+###### Keep-alive
 
 The `lifespan` prop defaults to `0` (keep-alive forever). It allows you to invalidate items over time.
 
@@ -61,7 +61,7 @@ The `lifespan` prop defaults to `0` (keep-alive forever). It allows you to inval
 suspend(fn, keys, { lifespan: 60000 })
 ```
 
-##### Equality function
+###### Equality function
 
 The `equal` prop defaults to shallow equal `(a, b) => a === b`, if you need it to compare objects, prototypes, maps, sets and so on you can exchange it.
 
