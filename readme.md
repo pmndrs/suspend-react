@@ -50,7 +50,7 @@ The dependencies/keys act as cache-keys, use as many as you want. If an entry is
 
 #### Config
 
-Both `suspend` and `preload` can optionally reveive a config object,
+Both `suspend` and `preload` can *optionally* reveive a config object,
 
 ###### Keep-alive
 
