@@ -63,7 +63,7 @@ suspend(fn, keys, { lifespan: 60000 })
 
 ###### Equality function
 
-The `equal` prop customizes key validation, it defaults to `(a, b) => a === b` (reference equality).
+The `equal` prop customizes per-key validation, it defaults to `(a, b) => a === b` (reference equality).
 
 ```jsx
 import equal from 'fast-deep-equal'
