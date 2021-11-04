@@ -22,7 +22,7 @@ import { Suspense } from 'react'
 import { suspend } from 'suspend-react'
 
 function Post({ id, version }) {
-  const data = suspend(async (/*id, version*/) => {
+  const data = suspend(async () => {
     const res = await fetch(`https://hacker-news.firebaseio.com/${version}/item/${id}.json`)
     return await res.json()
   }, [id, version])
