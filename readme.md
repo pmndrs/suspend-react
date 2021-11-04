@@ -68,6 +68,7 @@ The `equal` prop customizes key validation, it defaults to `(a, b) => a === b` (
 ```jsx
 import equal from 'fast-deep-equal'
 
+// Validate keys deeply
 suspend(fn, keys, { equal })
 ```
 
