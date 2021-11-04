@@ -1,15 +1,12 @@
 type Tuple<T = any> = [T] | T[]
 type Await<T> = T extends Promise<infer V> ? V : never
-type PromiseCache<Keys extends Tuple<unknown>> = {
+type Config = { lifespan?: number; equal?: (a: any, b: any) => boolean }
+type Cache<Keys extends Tuple<unknown>> = {
   promise: Promise<unknown>
   keys: Keys
   equal?: (a: any, b: any) => boolean
   error?: any
   response?: unknown
-}
-type Config = {
-  lifespan?: number
-  equal?: (a: any, b: any) => boolean
 }
 
 function shallowEqualArrays(
@@ -25,7 +22,7 @@ function shallowEqualArrays(
   return true
 }
 
-const globalCache: PromiseCache<Tuple<unknown>>[] = []
+const globalCache: Cache<Tuple<unknown>>[] = []
 
 function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promise<unknown>>(
   fn: Fn,
@@ -39,24 +36,23 @@ function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promis
       // If we're pre-loading and the element is present, just return
       if (preload) return undefined as unknown as Await<ReturnType<Fn>>
       // If an error occurred, throw
-      if (entry.error) throw entry.error
+      if (Object.prototype.hasOwnProperty.call(entry, 'error')) throw entry.error
       // If a response was successful, return
-      if (entry.response) return entry.response as Await<ReturnType<Fn>>
+      if (Object.prototype.hasOwnProperty.call(entry, 'response')) return entry.response as Await<ReturnType<Fn>>
       // If the promise is still unresolved, throw
       if (!preload) throw entry.promise
     }
   }
 
   // The request is new or has changed.
-  const entry: PromiseCache<Keys> = {
+  const entry: Cache<Keys> = {
     keys,
     equal: config.equal,
     promise:
       // Execute the promise
       fn(...keys)
         // When it resolves, store its value
-        // Coerce undefined values into true, or else the loop above wouldn't be able to return it
-        .then((response) => (entry.response = (response ?? true) as Response))
+        .then((response) => (entry.response = response))
         // Remove the entry if a lifespan was given
         .then(() => {
           if (config.lifespan && config.lifespan > 0) {
@@ -67,7 +63,7 @@ function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promis
           }
         })
         // Store caught errors, they will be thrown in the render-phase to bubble into an error-bound
-        .catch((e) => (entry.error = e ?? 'unknown error')),
+        .catch((error) => (entry.error = error)),
   }
   // Register the entry
   globalCache.push(entry)
