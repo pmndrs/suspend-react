@@ -18,11 +18,12 @@ function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promis
   fn: Fn,
   keys: Keys,
   preload = false,
-  config: Partial<Config> = { lifespan: 0 }
+  config: Partial<Config> = { lifespan: 0 },
+  equalFn: (k1: Keys, k2: Tuple<unknown>) => boolean = deepEqual
 ) {
   for (const entry of globalCache) {
     // Find a match
-    if (deepEqual(keys, entry.keys)) {
+    if (equalFn(keys, entry.keys)) {
       // If we're pre-loading and the element is present, just return
       if (preload) return undefined as unknown as Await<ReturnType<Fn>>
       // If an error occurred, throw
@@ -62,10 +63,10 @@ function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promis
   return undefined as unknown as Await<ReturnType<Fn>>
 }
 
-function clear<Keys extends Tuple<unknown>>(keys?: Keys) {
+function clear<Keys extends Tuple<unknown>>(keys?: Keys, equalFn: (k1: Keys, k2: Tuple<unknown>) => boolean = deepEqual) {
   if (keys === undefined || keys.length === 0) globalCache.splice(0, globalCache.length)
   else {
-    const entry = globalCache.find((entry) => deepEqual(keys, entry.keys))
+    const entry = globalCache.find((entry) => equalFn(keys, entry.keys))
     if (entry) {
       const index = globalCache.indexOf(entry)
       if (index !== -1) globalCache.splice(index, 1)
@@ -79,7 +80,7 @@ const suspend = <Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Prom
 const preload = <Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promise<unknown>>(fn: Fn, keys: Keys, config?: Config) =>
   void query(fn, keys, true, config)
 
-const peek = <Keys extends Tuple<unknown>>(keys: Keys) =>
-  globalCache.find((entry) => deepEqual(keys, entry.keys))?.response
+const peek = <Keys extends Tuple<unknown>>(keys: Keys, equalFn: (k1: Keys, k2: Tuple<unknown>) => boolean = deepEqual) =>
+  globalCache.find((entry) => equalFn(keys, entry.keys))?.response
 
 export { suspend, clear, preload, peek }
