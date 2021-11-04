@@ -3,7 +3,7 @@ type Await<T> = T extends Promise<infer V> ? V : never
 type PromiseCache<Keys extends Tuple<unknown>> = {
   promise: Promise<unknown>
   keys: Keys
-  equal: (a: any, b: any) => boolean
+  equal?: (a: any, b: any) => boolean
   error?: any
   response?: unknown
 }
@@ -12,8 +12,20 @@ type Config = {
   equal?: (a: any, b: any) => boolean
 }
 
+function shallowEqualArrays(
+  arrA: any[],
+  arrB: any[],
+  equal: (a: any, b: any) => boolean = (a: any, b: any) => a === b
+) {
+  if (arrA === arrB) return true
+  if (!arrA || !arrB) return false
+  const len = arrA.length
+  if (arrB.length !== len) return false
+  for (let i = 0; i < len; i++) if (!equal(arrA[i], arrB[i])) return false
+  return true
+}
+
 const globalCache: PromiseCache<Tuple<unknown>>[] = []
-const shallowEqual = (a: any, b: any) => a === b
 
 function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promise<unknown>>(
   fn: Fn,
@@ -23,7 +35,7 @@ function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promis
 ) {
   for (const entry of globalCache) {
     // Find a match
-    if (entry.equal(keys, entry.keys)) {
+    if (shallowEqualArrays(keys, entry.keys, entry.equal)) {
       // If we're pre-loading and the element is present, just return
       if (preload) return undefined as unknown as Await<ReturnType<Fn>>
       // If an error occurred, throw
@@ -38,7 +50,7 @@ function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promis
   // The request is new or has changed.
   const entry: PromiseCache<Keys> = {
     keys,
-    equal: config.equal || shallowEqual,
+    equal: config.equal,
     promise:
       // Execute the promise
       fn(...keys)
@@ -77,12 +89,12 @@ const preload = <Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Prom
 ) => void query(fn, keys, true, config)
 
 const peek = <Keys extends Tuple<unknown>>(keys: Keys) =>
-  globalCache.find((entry) => entry.equal(keys, entry.keys))?.response
+  globalCache.find((entry) => shallowEqualArrays(keys, entry.keys, entry.equal))?.response
 
 const clear = <Keys extends Tuple<unknown>>(keys?: Keys) => {
   if (keys === undefined || keys.length === 0) globalCache.splice(0, globalCache.length)
   else {
-    const entry = globalCache.find((entry) => entry.equal(keys, entry.keys))
+    const entry = globalCache.find((entry) => shallowEqualArrays(keys, entry.keys, entry.equal))
     if (entry) {
       const index = globalCache.indexOf(entry)
       if (index !== -1) globalCache.splice(index, 1)
