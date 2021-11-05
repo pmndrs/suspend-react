@@ -107,7 +107,7 @@ peek([1000, 'v0'])
 
 #### Making cache-keys unique
 
-Since `suspend` operates on a global cache (for now, see [React 18](#react-18)), you might be wondering if keys could bleed and yes they would. To establish cache-safety create unique or semi-unique appendixes.
+Since `suspend` operates on a global cache (for now, see [React 18](#react-18)), you might be wondering if keys could bleed, and yes they would. To establish cache-safety, create unique or semi-unique appendixes.
 
 ```diff
 - suspend(fn, [1000, 'v0'])
