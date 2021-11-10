@@ -10,7 +10,7 @@
 npm install suspend-react
 ```
 
-This library integrates your async ops into React suspense. Error-handling & loading states are handled at the parental level. The individual component functions similar to async/await in Javascript.
+This library integrates your async ops into React suspense. Pending- and Error-states are handled at the parental level which frees individual components from that burden and allows you to orchestrate them. The individual component functions similar to async/await in Javascript.
 
 - Chain your operations synchronously
 - No useEffect/setState hassle
