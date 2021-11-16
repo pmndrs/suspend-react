@@ -9,6 +9,8 @@ type Cache<Keys extends Tuple<unknown>> = {
   response?: unknown
 }
 
+const globalCache: Cache<Tuple<unknown>>[] = []
+
 function shallowEqualArrays(
   arrA: any[],
   arrB: any[],
@@ -21,8 +23,6 @@ function shallowEqualArrays(
   for (let i = 0; i < len; i++) if (!equal(arrA[i], arrB[i])) return false
   return true
 }
-
-const globalCache: Cache<Tuple<unknown>>[] = []
 
 function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promise<unknown>>(
   fn: Fn,
