@@ -129,9 +129,9 @@ export function Foo() {
 
 #### Utils
 
-###### waitFor
+##### waitFor
 
-An async utility function to `waitFor` the creates a promise only resolved when the return value is truthy. `interval` defaults to `100`(ms).
+An async utility that creates a promise which is only resolved when the return value is truthy. `interval` defaults to `100`(ms).
 
 ```ts
 waitFor(callback: () => boolean, interval?: number): Promise<unknown>
@@ -142,14 +142,7 @@ Useful for when you're waiting for a value that is populated for an async functi
 ```tsx
 const { customer } = useShopifyCustomer()
 
-suspend(
-  async (cust) => {
-    await waitFor(() => {
-      return Boolean(cust)
-    })
-  },
-  [customer]
-)
+suspend(async (cust) => await waitFor(() => Boolean(cust)), [customer])
 ```
 
 #### Typescript
