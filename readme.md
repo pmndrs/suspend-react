@@ -127,24 +127,6 @@ export function Foo() {
   suspend(fn, [1000, 'v0', fetchUUID])
 ```
 
-#### Utils
-
-##### waitFor
-
-An async utility that creates a promise which is only resolved when the return value is truthy. `interval` defaults to `100`(ms).
-
-```ts
-waitFor(callback: () => boolean, interval?: number): Promise<unknown>
-```
-
-Useful for when you're waiting for a value that is populated for an async function elsewhere in your application.
-
-```tsx
-const { customer } = useShopifyCustomer()
-
-suspend(async (cust) => await waitFor(() => Boolean(cust)), [customer])
-```
-
 #### Typescript
 
 Correct types will be inferred automatically.
