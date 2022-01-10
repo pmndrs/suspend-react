@@ -26,7 +26,11 @@ function Post({ id, version }) {
     const res = await fetch(`https://hacker-news.firebaseio.com/${version}/item/${id}.json`)
     return await res.json()
   }, [id, version])
-  return <div>{data.title} by {data.by}</div>
+  return (
+    <div>
+      {data.title} by {data.by}
+    </div>
+  )
 }
 
 function App() {
@@ -46,11 +50,11 @@ const result = suspend((...keys) => Promise<any>, keys: any[], config)
 
 When you call `suspend` it yields control back to React and the render-phase is aborted. It will resume once your promise resolves. For this to work you need to wrap it into a `<React.Suspense>` boundary, which requires you to set a fallback (which can be `null`).
 
-The dependencies/keys act as cache-keys, use as many as you want. If an entry is already in cache, calling `suspend` with the same keys will return it *immediately*, without breaking the render-phasse. Cache access is similar to useMemo but across the component tree. The first-arg function has to return a thenable (async function or a promise), it receives the keys as arguments. `suspend` will return the resolved value, not a promise! This is guaranteed, you do not have to check for validity. Errors will bubble up to the nearest error-boundary.
+The dependencies/keys act as cache-keys, use as many as you want. If an entry is already in cache, calling `suspend` with the same keys will return it _immediately_, without breaking the render-phasse. Cache access is similar to useMemo but across the component tree. The first-arg function has to return a thenable (async function or a promise), it receives the keys as arguments. `suspend` will return the resolved value, not a promise! This is guaranteed, you do not have to check for validity. Errors will bubble up to the nearest error-boundary.
 
 #### Config
 
-Both `suspend` and `preload` can *optionally* reveive a config object,
+Both `suspend` and `preload` can _optionally_ reveive a config object,
 
 ###### Keep-alive
 
@@ -121,6 +125,31 @@ const fetchUUID = Symbol()
 
 export function Foo() {
   suspend(fn, [1000, 'v0', fetchUUID])
+```
+
+#### Utils
+
+###### waitFor
+
+An async utility function to `waitFor` the creates a promise only resolved when the return value is truthy. `interval` defaults to `100`(ms).
+
+```ts
+waitFor(callback: () => boolean, interval?: number): Promise<unknown>
+```
+
+Useful for when you're waiting for a value that is populated for an async function elsewhere in your application.
+
+```tsx
+const { customer } = useShopifyCustomer()
+
+suspend(
+  async (cust) => {
+    await waitFor(() => {
+      return Boolean(cust)
+    })
+  },
+  [customer]
+)
 ```
 
 #### Typescript

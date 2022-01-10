@@ -1,3 +1,5 @@
+import { waitFor } from './asyncUtils/waitFor'
+
 type Tuple<T = any> = [T] | T[]
 type Await<T> = T extends Promise<infer V> ? V : never
 type Config = { lifespan?: number; equal?: (a: any, b: any) => boolean }
@@ -98,4 +100,4 @@ const clear = <Keys extends Tuple<unknown>>(keys?: Keys) => {
   }
 }
 
-export { suspend, clear, preload, peek }
+export { suspend, clear, preload, peek, waitFor }
