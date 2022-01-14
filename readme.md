@@ -45,7 +45,9 @@ const result = suspend((...keys) => Promise<any>, keys: any[], config)
 
 `suspend` yields control back to React and the render-phase is aborted. It will resume once your promise resolves. For this to work you need to wrap it into a `<React.Suspense>` block, which requires you to set a fallback (can be `null`).
 
-The dependencies (the 2nd argument) act as cache-keys, use as many as you want. If an entry is already in cache, calling `suspend` with the same keys will return it _immediately_ without breaking the render-phase. Cache access is similar to useMemo but *across the component tree*. The first-arg function has to return a thenable (async function or a promise), it receives the keys as arguments. `suspend` will return the resolved value, not a promise! This is guaranteed, *you do not have to check for validity*. Errors will bubble up to the nearest error-boundary.
+The dependencies (the 2nd argument) act as cache-keys, use as many as you want. If an entry is already in cache, calling `suspend` with the same keys will return it _immediately_ without breaking the render-phase. Cache access is similar to useMemo but *across the component tree*.
+
+The 1st argument has to be a function that returns a thenable (async function or a promise), it receives the keys as arguments. `suspend` will return the resolved value, not a promise! This is guaranteed, *you do not have to check for validity*. Errors will bubble up to the nearest error-boundary.
 
 #### Config
 
