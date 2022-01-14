@@ -10,12 +10,7 @@
 npm install suspend-react
 ```
 
-This library integrates your async ops into React suspense. Pending- and Error-states are handled at the parental level which frees individual components from that burden and allows you to orchestrate them. The individual component functions similar to async/await in Javascript.
-
-- Chain your operations synchronously
-- No useEffect/setState hassle
-- No checking for the presence of your data
-- **All React versions >= 16.6**
+This library integrates your async ops into React suspense. Pending- and error-states are handled at the parental level which frees the individual component from that burden and allows for better orchestration. Think of it as async/await for components. **Works in all React versions >= 16.6**.
 
 ```jsx
 import { Suspense } from 'react'
@@ -24,7 +19,7 @@ import { suspend } from 'suspend-react'
 function Post({ id, version }) {
   const data = suspend(async () => {
     const res = await fetch(`https://hacker-news.firebaseio.com/${version}/item/${id}.json`)
-    return await res.json()
+    return await res.json()    
   }, [id, version])
   return (
     <div>
@@ -48,9 +43,9 @@ function App() {
 const result = suspend((...keys) => Promise<any>, keys: any[], config)
 ```
 
-When you call `suspend` it yields control back to React and the render-phase is aborted. It will resume once your promise resolves. For this to work you need to wrap it into a `<React.Suspense>` boundary, which requires you to set a fallback (which can be `null`).
+`suspend` yields control back to React and the render-phase is aborted. It will resume once your promise resolves. For this to work you need to wrap it into a `<React.Suspense>` block, which requires you to set a fallback (can be `null`).
 
-The dependencies/keys act as cache-keys, use as many as you want. If an entry is already in cache, calling `suspend` with the same keys will return it _immediately_, without breaking the render-phasse. Cache access is similar to useMemo but across the component tree. The first-arg function has to return a thenable (async function or a promise), it receives the keys as arguments. `suspend` will return the resolved value, not a promise! This is guaranteed, you do not have to check for validity. Errors will bubble up to the nearest error-boundary.
+The dependencies (the 2nd argument) act as cache-keys, use as many as you want. If an entry is already in cache, calling `suspend` with the same keys will return it _immediately_ without breaking the render-phase. Cache access is similar to useMemo but *across the component tree*. The first-arg function has to return a thenable (async function or a promise), it receives the keys as arguments. `suspend` will return the resolved value, not a promise! This is guaranteed, *you do not have to check for validity*. Errors will bubble up to the nearest error-boundary.
 
 #### Config
 
