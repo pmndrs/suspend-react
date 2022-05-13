@@ -51,7 +51,7 @@ The 1st argument has to be a function that returns a thenable (async function or
 
 #### Config
 
-Both `suspend` and `preload` can _optionally_ reveive a config object,
+Both `suspend` and `preload` can _optionally_ receive a config object,
 
 ###### Keep-alive
 
