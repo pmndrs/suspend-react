@@ -19,7 +19,7 @@ import { suspend } from 'suspend-react'
 function Post({ id, version }) {
   const data = suspend(async () => {
     const res = await fetch(`https://hacker-news.firebaseio.com/${version}/item/${id}.json`)
-    return await res.json()    
+    return res.json()    
   }, [id, version])
   return (
     <div>
@@ -80,7 +80,7 @@ import { preload } from 'suspend-react'
 
 async function fetchFromHN(id, version) {
   const res = await fetch(`https://hacker-news.firebaseio.com/${version}/item/${id}.json`)
-  return await res.json()
+  return res.json()
 }
 
 preload(fetchFromHN, [1000, 'v0'])
