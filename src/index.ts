@@ -7,6 +7,8 @@ type Cache<Keys extends Tuple<unknown>> = {
   equal?: (a: any, b: any) => boolean
   error?: any
   response?: unknown
+  timeout?: ReturnType<typeof setTimeout>
+  remove: () => void
 }
 
 const globalCache: Cache<Tuple<unknown>>[] = []
@@ -38,7 +40,13 @@ function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promis
       // If an error occurred, throw
       if (Object.prototype.hasOwnProperty.call(entry, 'error')) throw entry.error
       // If a response was successful, return
-      if (Object.prototype.hasOwnProperty.call(entry, 'response')) return entry.response as Await<ReturnType<Fn>>
+      if (Object.prototype.hasOwnProperty.call(entry, 'response')) {
+        if (config.lifespan && config.lifespan > 0) {
+          if (entry.timeout) clearTimeout(entry.timeout)
+          entry.timeout = setTimeout(entry.remove, config.lifespan)
+        }
+        return entry.response as Await<ReturnType<Fn>>
+      }
       // If the promise is still unresolved, throw
       if (!preload) throw entry.promise
     }
@@ -48,18 +56,19 @@ function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promis
   const entry: Cache<Keys> = {
     keys,
     equal: config.equal,
+    remove: () => {
+      const index = globalCache.indexOf(entry)
+      if (index !== -1) globalCache.splice(index, 1)
+    },
     promise:
       // Execute the promise
       fn(...keys)
         // When it resolves, store its value
-        .then((response) => (entry.response = response))
-        // Remove the entry if a lifespan was given
-        .then(() => {
+        .then((response) => {
+          entry.response = response
+          // Remove the entry in time if a lifespan was given
           if (config.lifespan && config.lifespan > 0) {
-            setTimeout(() => {
-              const index = globalCache.indexOf(entry)
-              if (index !== -1) globalCache.splice(index, 1)
-            }, config.lifespan)
+            entry.timeout = setTimeout(entry.remove, config.lifespan)
           }
         })
         // Store caught errors, they will be thrown in the render-phase to bubble into an error-bound
@@ -91,10 +100,7 @@ const clear = <Keys extends Tuple<unknown>>(keys?: Keys) => {
   if (keys === undefined || keys.length === 0) globalCache.splice(0, globalCache.length)
   else {
     const entry = globalCache.find((entry) => shallowEqualArrays(keys, entry.keys, entry.equal))
-    if (entry) {
-      const index = globalCache.indexOf(entry)
-      if (index !== -1) globalCache.splice(index, 1)
-    }
+    if (entry) entry.remove()
   }
 }
 

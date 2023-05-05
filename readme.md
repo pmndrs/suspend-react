@@ -55,10 +55,10 @@ Both `suspend` and `preload` can _optionally_ receive a config object,
 
 ###### Keep-alive
 
-The `lifespan` prop allows you to invalidate items over time, it defaults to `0` (keep-alive forever).
+The `lifespan` prop allows you to invalidate items over time, it defaults to `0` (keep-alive forever). Every read refreshes the timer to ensure that used entries stay valid.
 
 ```jsx
-// Keep cached item alive for one minute
+// Keep cached item alive for one minute without read
 suspend(fn, keys, { lifespan: 60000 })
 ```
 
