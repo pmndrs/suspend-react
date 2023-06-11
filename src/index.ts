@@ -11,6 +11,9 @@ type Cache<Keys extends Tuple<unknown>> = {
   remove: () => void
 }
 
+const isPromise = (promise: any): promise is Promise<unknown> =>
+  typeof promise === 'object' && typeof (promise as Promise<any>).then === 'function'
+
 const globalCache: Cache<Tuple<unknown>>[] = []
 
 function shallowEqualArrays(
@@ -27,11 +30,15 @@ function shallowEqualArrays(
 }
 
 function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promise<unknown>>(
-  fn: Fn,
-  keys: Keys,
+  fn: Fn | Promise<unknown>,
+  keys: Keys = null as unknown as Keys,
   preload = false,
   config: Partial<Config> = {}
 ) {
+
+  // If no keys were given, the function is the key
+  if (keys === null) keys = [fn] as unknown as Keys
+
   for (const entry of globalCache) {
     // Find a match
     if (shallowEqualArrays(keys, entry.keys, entry.equal)) {
@@ -62,7 +69,7 @@ function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promis
     },
     promise:
       // Execute the promise
-      fn(...keys)
+      (isPromise(fn) ? fn : fn(...keys))
         // When it resolves, store its value
         .then((response) => {
           entry.response = response
@@ -82,14 +89,14 @@ function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promis
 }
 
 const suspend = <Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promise<unknown>>(
-  fn: Fn,
-  keys: Keys,
+  fn: Fn | Promise<unknown>,
+  keys?: Keys,
   config?: Config
 ) => query(fn, keys, false, config)
 
 const preload = <Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promise<unknown>>(
-  fn: Fn,
-  keys: Keys,
+  fn: Fn | Promise<unknown>,
+  keys?: Keys,
   config?: Config
 ) => void query(fn, keys, true, config)
 
