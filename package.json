@@ -1,6 +1,6 @@
 {
   "name": "suspend-react",
-  "version": "0.1.0",
+  "version": "0.0.0-semantic-release",
   "description": "Integrate React Suspense into your apps",
   "main": "dist/index.cjs.js",
   "module": "dist/index.js",
@@ -28,8 +28,9 @@
   },
   "scripts": {
     "build": "rollup -c",
-    "postbuild": "tsc --emitDeclarationOnly",
-    "prepublishOnly": "npm run build",
+    "postbuild": "tsc --emitDeclarationOnly && npm run copy",
+    "copy": "copyfiles package.json README.md LICENSE dist && json -I -f dist/package.json -e \"this.private=false; this.devDependencies=undefined; this.optionalDependencies=undefined; this.scripts=undefined; this.husky=undefined; this.prettier=undefined; this.jest=undefined; this['lint-staged']=undefined;\"",
+    "release": "semantic-release",
     "test": "echo no tests yet"
   },
   "devDependencies": {
@@ -51,6 +52,7 @@
     "@types/react-test-renderer": "^17.0.1",
     "@typescript-eslint/eslint-plugin": "^5.3.0",
     "@typescript-eslint/parser": "^5.3.0",
+    "copyfiles": "^2.4.1",
     "eslint": "^8.1.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-import-resolver-alias": "^1.1.2",
@@ -60,12 +62,14 @@
     "eslint-plugin-react": "^7.26.1",
     "eslint-plugin-react-hooks": "^4.2.0",
     "husky": "^7.0.4",
+    "json": "^11.0.0",
     "lint-staged": "^11.2.6",
     "prettier": "^2.4.1",
     "react": "^17.0.1",
     "rollup": "^2.59.0",
     "rollup-plugin-size-snapshot": "^0.12.0",
     "rollup-plugin-terser": "^7.0.2",
+    "semantic-release": "^21.0.5",
     "typescript": "^4.4.4"
   },
   "peerDependencies": {
