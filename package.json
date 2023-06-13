@@ -29,7 +29,7 @@
   "scripts": {
     "build": "rollup -c",
     "postbuild": "tsc --emitDeclarationOnly && npm run copy",
-    "copy": "copyfiles package.json README.md LICENSE dist && json -I -f dist/package.json -e \"this.private=false; this.devDependencies=undefined; this.optionalDependencies=undefined; this.scripts=undefined; this.husky=undefined; this.prettier=undefined; this.jest=undefined; this['lint-staged']=undefined;\"",
+    "copy": "copyfiles package.json readme.md LICENSE dist && json -I -f dist/package.json -e \"this.private=false; this.devDependencies=undefined; this.optionalDependencies=undefined; this.scripts=undefined; this.husky=undefined; this.prettier=undefined; this.jest=undefined; this['lint-staged']=undefined;\"",
     "release": "semantic-release",
     "test": "echo no tests yet"
   },
