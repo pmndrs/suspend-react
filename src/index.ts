@@ -1,5 +1,4 @@
 type Tuple<T = any> = [T] | T[]
-type Await<T> = T extends Promise<infer V> ? V : never
 type Config = { lifespan?: number; equal?: (a: any, b: any) => boolean }
 type Cache<Keys extends Tuple<unknown>> = {
   promise: Promise<unknown>
@@ -43,7 +42,7 @@ function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promis
     // Find a match
     if (shallowEqualArrays(keys, entry.keys, entry.equal)) {
       // If we're pre-loading and the element is present, just return
-      if (preload) return undefined as unknown as Await<ReturnType<Fn>>
+      if (preload) return undefined as unknown as Awaited<ReturnType<Fn>>
       // If an error occurred, throw
       if (Object.prototype.hasOwnProperty.call(entry, 'error')) throw entry.error
       // If a response was successful, return
@@ -52,7 +51,7 @@ function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promis
           if (entry.timeout) clearTimeout(entry.timeout)
           entry.timeout = setTimeout(entry.remove, config.lifespan)
         }
-        return entry.response as Await<ReturnType<Fn>>
+        return entry.response as Awaited<ReturnType<Fn>>
       }
       // If the promise is still unresolved, throw
       if (!preload) throw entry.promise
@@ -85,7 +84,7 @@ function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promis
   globalCache.push(entry)
   // And throw the promise, this yields control back to React
   if (!preload) throw entry.promise
-  return undefined as unknown as Await<ReturnType<Fn>>
+  return undefined as unknown as Awaited<ReturnType<Fn>>
 }
 
 const suspend = <Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promise<unknown>>(
