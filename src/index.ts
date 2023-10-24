@@ -1,12 +1,11 @@
 type Tuple<T = any> = [T] | T[]
-type Await<T> = T extends Promise<infer V> ? V : never
 type Config = { lifespan?: number; equal?: (a: any, b: any) => boolean }
-type Cache<Keys extends Tuple<unknown>> = {
-  promise: Promise<unknown>
+type Cache<T extends unknown, Keys extends Tuple<unknown>> = {
+  promise: Promise<T>
   keys: Keys
   equal?: (a: any, b: any) => boolean
   error?: any
-  response?: unknown
+  response?: T
   timeout?: ReturnType<typeof setTimeout>
   remove: () => void
 }
@@ -14,53 +13,18 @@ type Cache<Keys extends Tuple<unknown>> = {
 const isPromise = (promise: any): promise is Promise<unknown> =>
   typeof promise === 'object' && typeof (promise as Promise<any>).then === 'function'
 
-const globalCache: Cache<Tuple<unknown>>[] = []
+const globalCache: Cache<unknown, Tuple<unknown>>[] = []
 
-function shallowEqualArrays(
-  arrA: any[],
-  arrB: any[],
-  equal: (a: any, b: any) => boolean = (a: any, b: any) => a === b
-) {
-  if (arrA === arrB) return true
-  if (!arrA || !arrB) return false
-  const len = arrA.length
-  if (arrB.length !== len) return false
-  for (let i = 0; i < len; i++) if (!equal(arrA[i], arrB[i])) return false
-  return true
+function get(keys: Tuple<unknown>) {
+  return globalCache.find((entry) => shallowEqualArrays(keys, entry.keys, entry.equal))
 }
 
-function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promise<unknown>>(
-  fn: Fn | Promise<unknown>,
-  keys: Keys = null as unknown as Keys,
-  preload = false,
+function set<T extends unknown, Keys extends Tuple<unknown>>(
+  fn: Promise<T> | ((...keys: Keys) => Promise<T>),
+  keys: Keys,
   config: Partial<Config> = {}
 ) {
-
-  // If no keys were given, the function is the key
-  if (keys === null) keys = [fn] as unknown as Keys
-
-  for (const entry of globalCache) {
-    // Find a match
-    if (shallowEqualArrays(keys, entry.keys, entry.equal)) {
-      // If we're pre-loading and the element is present, just return
-      if (preload) return undefined as unknown as Await<ReturnType<Fn>>
-      // If an error occurred, throw
-      if (Object.prototype.hasOwnProperty.call(entry, 'error')) throw entry.error
-      // If a response was successful, return
-      if (Object.prototype.hasOwnProperty.call(entry, 'response')) {
-        if (config.lifespan && config.lifespan > 0) {
-          if (entry.timeout) clearTimeout(entry.timeout)
-          entry.timeout = setTimeout(entry.remove, config.lifespan)
-        }
-        return entry.response as Await<ReturnType<Fn>>
-      }
-      // If the promise is still unresolved, throw
-      if (!preload) throw entry.promise
-    }
-  }
-
-  // The request is new or has changed.
-  const entry: Cache<Keys> = {
+  const entry: Cache<T, Keys> = {
     keys,
     equal: config.equal,
     remove: () => {
@@ -81,32 +45,63 @@ function query<Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promis
         // Store caught errors, they will be thrown in the render-phase to bubble into an error-bound
         .catch((error) => (entry.error = error)),
   }
-  // Register the entry
   globalCache.push(entry)
-  // And throw the promise, this yields control back to React
-  if (!preload) throw entry.promise
-  return undefined as unknown as Await<ReturnType<Fn>>
+  return entry
 }
 
-const suspend = <Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promise<unknown>>(
-  fn: Fn | Promise<unknown>,
+function query<T extends unknown, Keys extends Tuple<unknown>>(
+  fn: Promise<T> | ((...keys: Keys) => Promise<T>),
+  keys: Keys = null as unknown as Keys,
+  config?: Partial<Config>
+) {
+  if (keys === null) keys = [fn] as unknown as Keys
+  const cached = get(keys)
+  if (cached) return cached as Cache<T, Keys>
+  return set(fn, keys, config)
+}
+
+function shallowEqualArrays(
+  arrA: any[],
+  arrB: any[],
+  equal: (a: any, b: any) => boolean = (a: any, b: any) => a === b
+) {
+  if (arrA === arrB) return true
+  if (!arrA || !arrB) return false
+  const len = arrA.length
+  if (arrB.length !== len) return false
+  for (let i = 0; i < len; i++) if (!equal(arrA[i], arrB[i])) return false
+  return true
+}
+
+const suspend = <T extends unknown, Keys extends Tuple<unknown>>(
+  fn: Promise<T> | ((...keys: Keys) => Promise<T>),
   keys?: Keys,
   config?: Config
-) => query(fn, keys, false, config)
+) => {
+  const entry = query(fn, keys, config)
+  if (Object.prototype.hasOwnProperty.call(entry, 'error')) throw entry.error
+  if (Object.prototype.hasOwnProperty.call(entry, 'response')) {
+    if (config?.lifespan && config.lifespan > 0) {
+      if (entry.timeout) clearTimeout(entry.timeout)
+      entry.timeout = setTimeout(entry.remove, config.lifespan)
+    }
+    return entry.response as T
+  }
+  throw entry.promise
+}
 
-const preload = <Keys extends Tuple<unknown>, Fn extends (...keys: Keys) => Promise<unknown>>(
-  fn: Fn | Promise<unknown>,
+const preload = <T extends unknown, Keys extends Tuple<unknown>>(
+  fn: Promise<T> | ((...keys: Keys) => Promise<T>),
   keys?: Keys,
   config?: Config
-) => void query(fn, keys, true, config)
+) => query(fn, keys, config).promise
 
-const peek = <Keys extends Tuple<unknown>>(keys: Keys) =>
-  globalCache.find((entry) => shallowEqualArrays(keys, entry.keys, entry.equal))?.response
+const peek = <Keys extends Tuple<unknown>>(keys: Keys) => get(keys)?.response
 
 const clear = <Keys extends Tuple<unknown>>(keys?: Keys) => {
   if (keys === undefined || keys.length === 0) globalCache.splice(0, globalCache.length)
   else {
-    const entry = globalCache.find((entry) => shallowEqualArrays(keys, entry.keys, entry.equal))
+    const entry = get(keys)
     if (entry) entry.remove()
   }
 }
